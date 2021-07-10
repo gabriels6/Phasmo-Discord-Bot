@@ -1,0 +1,19 @@
+{
+  "name": "Phasmo-Randomizer",
+  "version": "1.0.0",
+  "description": "Phasmo randomizer system",
+  "main": "index.js",
+  "author": "Gabriel Gomes",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "start": "node src/App/index.js"
+  },
+  "dependencies": {
+    "@discordjs/opus": "^0.5.0",
+    "discord.js": "^12.5.3",
+    "dotenv": "^9.0.2",
+    "ytdl": "^1.4.1",
+    "ytdl-core": "^4.8.0"
+  }
+}
