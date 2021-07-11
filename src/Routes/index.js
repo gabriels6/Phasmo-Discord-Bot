@@ -3,7 +3,9 @@ const {items,lightSource} = require('../Values/Equipment');
 const Number = require('../Utils/Number');
 const Ghosts = require('../Values/Ghosts');
 const {colors} = require('../Values/Colors');
+const Sounds = require('../Values/Sounds');
 const {maps} = require('../Values/Maps');
+const { playAudioFromURL } = require('../Utils/Sound');
 
 async function help(message){
     var embed = new Discord.MessageEmbed()
@@ -118,9 +120,108 @@ async function randomizeEquipment(message,args){
         message.channel.send(embed);
     }
 
+    async function joinVoiceChannel(message,args, Client){
+        const voiceChannelName = args[0].replace("|"," ").replace("|"," ");
+        const voiceChannelGuild = message.guild;
+
+        if(args.length === 0){
+            return;
+        }
+
+        var voiceChannelPromise;
+
+        const voiceChannels = Client.channels.cache
+
+        voiceChannels.map((voiceChannel) => {
+            if(voiceChannel.guild.name !== voiceChannelGuild.name){
+                return ;
+            }
+
+            if(voiceChannelName !== voiceChannel.name){
+                return;
+            }
+
+            if(voiceChannel.type !== 'voice'){
+                return;
+            }
+
+            if(voiceChannel === undefined){
+                console.log("Voice Channel undefined");
+                return;
+            }
+
+            
+
+            voiceChannelPromise = Client.channels.fetch(voiceChannel.id);
+        });
+
+        if(voiceChannelPromise == undefined){
+            return;
+        }
+
+        voiceChannel = await voiceChannelPromise
+
+        voiceChannel.join();
+
+        return voiceChannel;
+        
+    }
+
+    async function playSong(message, args, Client){
+        const ytURL = args[0];
+
+        if(args.length === 0){
+            return;
+        }
+
+        playAudioFromURL(ytURL,Client);
+
+    }
+
+    function playRandomSound(Client){
+
+
+        let soundRange = [0,Sounds.length - 1];
+
+            
+        let randomNumber = Number.randomize(soundRange,[999]);
+
+        let Sound = Sounds[randomNumber];
+
+        playAudioFromURL(Sound,Client);
+
+    }
+
+    function stopRandomSounds(Client,soundInterval){
+        console.log(soundInterval);
+        
+        Client.clearInterval(soundInterval);
+    }
+
+    async function leaveChannel(message,args,Client){
+        const guild = message.guild;
+
+        Client.channels.cache.forEach((channel) => {
+            ChannelPromise = Client.channels.fetch(channel.id);
+
+            ChannelPromise.then((channel) => {
+
+                if(channel.type === 'voice' && channel.guild === guild){
+                    channel.leave();
+                }
+
+            });
+        });
+    }
+
     module.exports = {
         help,
         randomizeMap,
         randomizeEquipment,
-        getGhost
+        getGhost,
+        joinVoiceChannel,
+        playSong,
+        leaveChannel,
+        playRandomSound,
+        stopRandomSounds
     }
