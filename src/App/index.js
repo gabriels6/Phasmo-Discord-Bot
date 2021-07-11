@@ -57,15 +57,11 @@ Client.on("message", async function(message){
             break;
         
         case "random-sounds":
-                soundInterval = setInterval(function(){
-                    playRandomSound(Client)
-                },args[0]);
+                await playRandomSound(message,args,Client);
             break;
 
         case "stop-sounds":
-                console.log(soundInterval)
-                
-                clearInterval(soundInterval);
+                await stopRandomSounds();
             break;
 
         case "ghost":

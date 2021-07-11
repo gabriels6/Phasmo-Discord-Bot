@@ -7,6 +7,9 @@ const Sounds = require('../Values/Sounds');
 const {maps} = require('../Values/Maps');
 const { playAudioFromURL } = require('../Utils/Sound');
 
+
+let active = false;
+
 async function help(message){
     var embed = new Discord.MessageEmbed()
                         .setTitle("PhasmoPhobia Bot Helper")
@@ -178,24 +181,31 @@ async function randomizeEquipment(message,args){
 
     }
 
-    function playRandomSound(Client){
+    async function playRandomSound(message,args,Client){
 
+        let soundIntervalTime = parseInt(args[0]);
 
         let soundRange = [0,Sounds.length - 1];
 
+        active = true
+        setTimeout(() => {
+            if(active){
             
-        let randomNumber = Number.randomize(soundRange,[999]);
+                let randomNumber = Number.randomize(soundRange,[999]);
 
-        let Sound = Sounds[randomNumber];
+                let Sound = Sounds[randomNumber];
 
-        playAudioFromURL(Sound,Client);
+                playAudioFromURL(Sound,Client);
+                playRandomSound(message,args,Client);
+            
+                console.log(soundIntervalTime * 1000);
+            }
+        }, soundIntervalTime * 1000);
 
     }
 
-    function stopRandomSounds(Client,soundInterval){
-        console.log(soundInterval);
-        
-        Client.clearInterval(soundInterval);
+    async function stopRandomSounds(){
+        active = false;
     }
 
     async function leaveChannel(message,args,Client){
