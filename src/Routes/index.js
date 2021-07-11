@@ -181,14 +181,25 @@ async function randomizeEquipment(message,args){
 
     }
 
-    async function playRandomSound(message,args,Client){
+    async function displayRandomSoundMessage(message,args,Client,soundInterval){
 
-        let soundIntervalTime = parseInt(args[0]);
+        var embed = new Discord.MessageEmbed()
+                            .setTitle("Random Sounds")
+                            .setDescription("Random bot sounds were enabled. To Disable, apply \'#stop-sounds\'")
+                            .setColor(colors[3]);
+
+        embed.addField("Time between sounds",soundInterval,false);
+
+        message.channel.send(embed);
+    }
+
+    async function playRandomSound(message,args,Client,soundInterval){
 
         let soundRange = [0,Sounds.length - 1];
 
         active = true
-        setTimeout(() => {
+
+        setTimeout(async () => {
             if(active){
             
                 let randomNumber = Number.randomize(soundRange,[999]);
@@ -196,11 +207,10 @@ async function randomizeEquipment(message,args){
                 let Sound = Sounds[randomNumber];
 
                 playAudioFromURL(Sound,Client);
-                playRandomSound(message,args,Client);
+                await playRandomSound(message,args,Client,soundInterval);
             
-                console.log(soundIntervalTime * 1000);
             }
-        }, soundIntervalTime * 1000);
+        }, soundInterval);
 
     }
 
@@ -233,5 +243,6 @@ async function randomizeEquipment(message,args){
         playSong,
         leaveChannel,
         playRandomSound,
-        stopRandomSounds
+        stopRandomSounds,
+        displayRandomSoundMessage
     }

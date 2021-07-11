@@ -7,7 +7,8 @@ const { help,
         playSong,
         leaveChannel,
         playRandomSound,
-        stopRandomSounds
+        stopRandomSounds,
+        displayRandomSoundMessage
      } = require('../Routes/index');
 require('dotenv').config({path:__dirname + '/../../.env'});
 
@@ -24,7 +25,6 @@ Client.on("ready", () => {
 Client.on("message", async function(message){
 
     var voiceChannel;
-    var soundInterval;
 
     if(message.author.bot) return;
 
@@ -57,7 +57,14 @@ Client.on("message", async function(message){
             break;
         
         case "random-sounds":
-                await playRandomSound(message,args,Client);
+                let soundIntervalTime = parseFloat(args[0]);
+
+                if(soundIntervalTime < 1000){
+                    soundIntervalTime *= 1000;
+                }
+
+                await displayRandomSoundMessage(message,args,Client,soundIntervalTime);
+                await playRandomSound(message,args,Client,soundIntervalTime);
             break;
 
         case "stop-sounds":
